@@ -58,9 +58,3 @@ dart test test/integration_test.dart
 ## Usage
 
 See `test/integration_test.dart` for complete examples of how to instantiate and use the client.
-
-## Notes
-
-- The blake3 implementation uses SHA-256 as a fallback. For production use, integrate a proper blake3 package.
-- The secp256r1 implementation uses PointyCastle for ECDSA operations.
-- All storage and network operations are abstracted through interfaces for flexibility.
