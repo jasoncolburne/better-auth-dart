@@ -1,0 +1,46 @@
+import 'dart:convert';
+import 'message.dart';
+
+class ServerResponse<T> extends SignableMessage {
+  @override
+  late final Map<String, dynamic> payload;
+
+  ServerResponse(T response, String responseKeyHash, String nonce) {
+    payload = {
+      'access': {
+        'nonce': nonce,
+        'responseKeyHash': responseKeyHash,
+      },
+      'response': response,
+    };
+  }
+
+  static ServerResponse<T> parse<T>(
+    String message,
+    ServerResponse<T> Function(T response, String publicKeyHash, String nonce)
+        constructor,
+  ) {
+    final json = jsonDecode(message) as Map<String, dynamic>;
+    final payload = json['payload'] as Map<String, dynamic>;
+    final access = payload['access'] as Map<String, dynamic>;
+    final result = constructor(
+      payload['response'] as T,
+      access['responseKeyHash'] as String,
+      access['nonce'] as String,
+    );
+    result.signature = json['signature'] as String?;
+    return result;
+  }
+}
+
+class ScannableResponse extends ServerResponse<Map<String, dynamic>> {
+  ScannableResponse(super.response, super.publicKeyHash, super.nonce);
+
+  static ScannableResponse parse(String message) {
+    return ServerResponse.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
+          ScannableResponse(response, publicKeyHash, nonce),
+    ) as ScannableResponse;
+  }
+}
