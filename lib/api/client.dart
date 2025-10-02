@@ -138,10 +138,7 @@ class BetterAuthClient {
         'publicKey': publicKey,
         'rotationHash': rotationHash,
       },
-      'link': {
-        'payload': container.payload,
-        'signature': container.signature,
-      },
+      'link': container.toJson(),
     }, nonce);
 
     await request.sign(await _authenticationKeyStore.signer());
