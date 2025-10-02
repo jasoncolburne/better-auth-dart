@@ -80,7 +80,7 @@ class BetterAuthClient {
 
     await request.sign(await _authenticationKeyStore.signer());
     final message = await request.serialize();
-    final reply = await _network.sendRequest(_paths.register.create, message);
+    final reply = await _network.sendRequest(_paths.account.create, message);
 
     final response = CreationResponse.parse(reply);
     await _verifyResponse(
@@ -126,19 +126,55 @@ class BetterAuthClient {
     final container = LinkContainer.parse(linkContainer);
     final nonce = await _noncer.generate128();
 
+    // Rotate authentication key
+    final result = await _authenticationKeyStore.rotate();
+    final publicKey = result[0];
+    final rotationHash = result[1];
+
     final request = LinkDeviceRequest({
       'authentication': {
         'device': await _deviceIdentifierStore.get(),
         'identity': await _identityIdentifierStore.get(),
+        'publicKey': publicKey,
+        'rotationHash': rotationHash,
       },
-      'link': container.toJson(),
+      'link': {
+        'payload': container.payload,
+        'signature': container.signature,
+      },
     }, nonce);
 
     await request.sign(await _authenticationKeyStore.signer());
     final message = await request.serialize();
-    final reply = await _network.sendRequest(_paths.register.link, message);
+    final reply = await _network.sendRequest(_paths.rotate.link, message);
 
     final response = LinkDeviceResponse.parse(reply);
+    await _verifyResponse(
+        response, response.payload['access']['responseKeyHash']);
+
+    if (response.payload['access']['nonce'] != nonce) {
+      throw Exception('incorrect nonce');
+    }
+  }
+
+  Future<void> unlinkDevice() async {
+    final result = await _authenticationKeyStore.rotate();
+    final publicKey = result[0];
+    final nonce = await _noncer.generate128();
+
+    final request = UnlinkDeviceRequest({
+      'authentication': {
+        'device': await _deviceIdentifierStore.get(),
+        'identity': await _identityIdentifierStore.get(),
+        'publicKey': publicKey,
+      },
+    }, nonce);
+
+    await request.sign(await _authenticationKeyStore.signer());
+    final message = await request.serialize();
+    final reply = await _network.sendRequest(_paths.rotate.unlink, message);
+
+    final response = UnlinkDeviceResponse.parse(reply);
     await _verifyResponse(
         response, response.payload['access']['responseKeyHash']);
 
@@ -265,7 +301,8 @@ class BetterAuthClient {
         .store(response.payload['response']['access']['token']);
   }
 
-  Future<void> recoverAccount(String identity, ISigningKey recoveryKey) async {
+  Future<void> recoverAccount(
+      String identity, ISigningKey recoveryKey, String recoveryHash) async {
     final result = await _authenticationKeyStore.initialize();
     final current = result[1];
     final rotationHash = result[2];
@@ -277,6 +314,7 @@ class BetterAuthClient {
         'device': device,
         'identity': identity,
         'publicKey': current,
+        'recoveryHash': recoveryHash,
         'recoveryKey': await recoveryKey.public(),
         'rotationHash': rotationHash,
       },
@@ -284,7 +322,7 @@ class BetterAuthClient {
 
     await request.sign(recoveryKey);
     final message = await request.serialize();
-    final reply = await _network.sendRequest(_paths.register.recover, message);
+    final reply = await _network.sendRequest(_paths.rotate.recover, message);
 
     final response = RecoverAccountResponse.parse(reply);
     await _verifyResponse(

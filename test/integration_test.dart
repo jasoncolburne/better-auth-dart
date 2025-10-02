@@ -30,10 +30,8 @@ class Secp256r1VerificationKey implements IVerificationKey {
 }
 
 final authenticationPaths = IAuthenticationPaths(
-  register: RegisterPaths(
-    create: '/register/create',
-    link: '/register/link',
-    recover: '/register/recover',
+  account: AccountPaths(
+    create: '/account/create',
   ),
   authenticate: AuthenticatePaths(
     start: '/authenticate/start',
@@ -42,6 +40,9 @@ final authenticationPaths = IAuthenticationPaths(
   rotate: RotatePaths(
     authentication: '/rotate/authentication',
     access: '/rotate/access',
+    link: '/rotate/link',
+    unlink: '/rotate/unlink',
+    recover: '/rotate/recover',
   ),
 );
 
@@ -191,8 +192,13 @@ void main() {
 
       final recoveryHash = await hasher.sum(await recoverySigner.public());
       await betterAuthClient.createAccount(recoveryHash);
+
+      final nextRecoverySigner = Secp256r1();
+      await nextRecoverySigner.generate();
+      final nextRecoveryHash = await hasher.sum(await nextRecoverySigner.public());
       final identity = await betterAuthClient.identity();
-      await recoveredBetterAuthClient.recoverAccount(identity, recoverySigner);
+      await recoveredBetterAuthClient.recoverAccount(
+          identity, recoverySigner, nextRecoveryHash);
       await executeFlow(
           recoveredBetterAuthClient, eccVerifier, responseVerificationKey);
     });
@@ -252,6 +258,10 @@ void main() {
 
       // submit an endorsed link container with existing device
       await betterAuthClient.linkDevice(linkContainer);
+
+      // unlink the original device
+      await betterAuthClient.unlinkDevice();
+
       await executeFlow(
           linkedBetterAuthClient, eccVerifier, responseVerificationKey);
     });
