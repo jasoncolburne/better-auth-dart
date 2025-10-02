@@ -195,7 +195,8 @@ void main() {
 
       final nextRecoverySigner = Secp256r1();
       await nextRecoverySigner.generate();
-      final nextRecoveryHash = await hasher.sum(await nextRecoverySigner.public());
+      final nextRecoveryHash =
+          await hasher.sum(await nextRecoverySigner.public());
       final identity = await betterAuthClient.identity();
       await recoveredBetterAuthClient.recoverAccount(
           identity, recoverySigner, nextRecoveryHash);
