@@ -264,7 +264,8 @@ void main() {
           linkedBetterAuthClient, eccVerifier, responseVerificationKey);
 
       // unlink the original device
-      await linkedBetterAuthClient.unlinkDevice(await betterAuthClient.device());
+      await linkedBetterAuthClient
+          .unlinkDevice(await betterAuthClient.device());
     });
 
     test('detects mismatched access nonce', () async {
