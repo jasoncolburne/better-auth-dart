@@ -154,16 +154,25 @@ class BetterAuthClient {
     }
   }
 
-  Future<void> unlinkDevice() async {
-    final result = await _authenticationKeyStore.rotate();
-    final publicKey = result[0];
+  Future<void> unlinkDevice(String device) async {
+    final [publicKey, rotationHash] = await _authenticationKeyStore.rotate();
     final nonce = await _noncer.generate128();
+
+    var hash = rotationHash;
+    if (device == await _deviceIdentifierStore.get()) {
+      // if we're disabling the current device, this stops rotations
+      hash = await _hasher.sum(rotationHash);
+    }
 
     final request = UnlinkDeviceRequest({
       'authentication': {
         'device': await _deviceIdentifierStore.get(),
         'identity': await _identityIdentifierStore.get(),
         'publicKey': publicKey,
+        'rotationHash': hash,
+      },
+      'link': {
+        'device': device,
       },
     }, nonce);
 
