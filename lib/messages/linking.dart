@@ -52,3 +52,27 @@ class LinkDeviceResponse extends ServerResponse<Map<String, dynamic>> {
     ) as LinkDeviceResponse;
   }
 }
+
+class UnlinkDeviceRequest extends ClientRequest<Map<String, dynamic>> {
+  UnlinkDeviceRequest(super.request, super.nonce);
+
+  static UnlinkDeviceRequest parse(String message) {
+    return ClientRequest.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> request, String nonce) =>
+          UnlinkDeviceRequest(request, nonce),
+    ) as UnlinkDeviceRequest;
+  }
+}
+
+class UnlinkDeviceResponse extends ServerResponse<Map<String, dynamic>> {
+  UnlinkDeviceResponse(super.response, super.publicKeyHash, super.nonce);
+
+  static UnlinkDeviceResponse parse(String message) {
+    return ServerResponse.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
+          UnlinkDeviceResponse(response, publicKeyHash, nonce),
+    ) as UnlinkDeviceResponse;
+  }
+}

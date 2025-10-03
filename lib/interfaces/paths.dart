@@ -1,12 +1,20 @@
 class IAuthenticationPaths {
+  final AccountPaths account;
   final AuthenticatePaths authenticate;
-  final RegisterPaths register;
   final RotatePaths rotate;
 
   IAuthenticationPaths({
+    required this.account,
     required this.authenticate,
-    required this.register,
     required this.rotate,
+  });
+}
+
+class AccountPaths {
+  final String create;
+
+  AccountPaths({
+    required this.create,
   });
 }
 
@@ -20,24 +28,18 @@ class AuthenticatePaths {
   });
 }
 
-class RegisterPaths {
-  final String create;
-  final String link;
-  final String recover;
-
-  RegisterPaths({
-    required this.create,
-    required this.link,
-    required this.recover,
-  });
-}
-
 class RotatePaths {
   final String authentication;
   final String access;
+  final String link;
+  final String unlink;
+  final String recover;
 
   RotatePaths({
     required this.authentication,
     required this.access,
+    required this.link,
+    required this.unlink,
+    required this.recover,
   });
 }
