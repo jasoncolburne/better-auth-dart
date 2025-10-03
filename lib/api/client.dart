@@ -155,8 +155,9 @@ class BetterAuthClient {
   }
 
   Future<void> unlinkDevice(String device) async {
-    final [publicKey, rotationHash] = await _authenticationKeyStore.rotate();
     final nonce = await _noncer.generate128();
+
+    final [publicKey, rotationHash] = await _authenticationKeyStore.rotate();
 
     var hash = rotationHash;
     if (device == await _deviceIdentifierStore.get()) {
