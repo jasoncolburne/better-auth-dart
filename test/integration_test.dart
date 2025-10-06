@@ -187,7 +187,8 @@ void main() {
       );
 
       final recoveredVerificationKeyStore = VerificationKeyStore();
-      recoveredVerificationKeyStore.add(serverIdentity, responseVerificationKey);
+      recoveredVerificationKeyStore.add(
+          serverIdentity, responseVerificationKey);
 
       final recoveredBetterAuthClient = BetterAuthClient(
         hasher: Hasher(),
