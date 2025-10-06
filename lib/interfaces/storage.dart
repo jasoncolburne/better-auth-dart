@@ -84,3 +84,9 @@ abstract class IServerTimeLockStore {
   // - value is still alive in the store
   Future<void> reserve(String value);
 }
+
+abstract class IVerificationKeyStore {
+  // throw an exception if:
+  // - identity is not found
+  Future<IVerificationKey> get(String identity);
+}

@@ -74,3 +74,19 @@ class ClientValueStore implements IClientValueStore {
     return _value!;
   }
 }
+
+class VerificationKeyStore implements IVerificationKeyStore {
+  final Map<String, IVerificationKey> _keys = {};
+
+  void add(String identity, IVerificationKey key) {
+    _keys[identity] = key;
+  }
+
+  @override
+  Future<IVerificationKey> get(String identity) async {
+    if (!_keys.containsKey(identity)) {
+      throw Exception('key not found for identity: $identity');
+    }
+    return _keys[identity]!;
+  }
+}
