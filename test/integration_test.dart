@@ -70,13 +70,13 @@ class Network implements INetwork {
 }
 
 class FakeResponse extends ServerResponse<Map<String, dynamic>> {
-  FakeResponse(super.response, super.publicKeyHash, super.nonce);
+  FakeResponse(super.response, super.serverIdentity, super.nonce);
 
   static FakeResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          FakeResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          FakeResponse(response, serverIdentity, nonce),
     ) as FakeResponse;
   }
 }

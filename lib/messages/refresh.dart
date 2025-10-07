@@ -14,13 +14,13 @@ class RefreshAccessTokenRequest extends ClientRequest<Map<String, dynamic>> {
 }
 
 class RefreshAccessTokenResponse extends ServerResponse<Map<String, dynamic>> {
-  RefreshAccessTokenResponse(super.response, super.publicKeyHash, super.nonce);
+  RefreshAccessTokenResponse(super.response, super.serverIdentity, super.nonce);
 
   static RefreshAccessTokenResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          RefreshAccessTokenResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          RefreshAccessTokenResponse(response, serverIdentity, nonce),
     ) as RefreshAccessTokenResponse;
   }
 }

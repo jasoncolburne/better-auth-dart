@@ -22,13 +22,13 @@ class StartAuthenticationRequest extends SerializableMessage {
 }
 
 class StartAuthenticationResponse extends ServerResponse<Map<String, dynamic>> {
-  StartAuthenticationResponse(super.response, super.publicKeyHash, super.nonce);
+  StartAuthenticationResponse(super.response, super.serverIdentity, super.nonce);
 
   static StartAuthenticationResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          StartAuthenticationResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          StartAuthenticationResponse(response, serverIdentity, nonce),
     ) as StartAuthenticationResponse;
   }
 }
@@ -48,13 +48,13 @@ class FinishAuthenticationRequest extends ClientRequest<Map<String, dynamic>> {
 class FinishAuthenticationResponse
     extends ServerResponse<Map<String, dynamic>> {
   FinishAuthenticationResponse(
-      super.response, super.publicKeyHash, super.nonce);
+      super.response, super.serverIdentity, super.nonce);
 
   static FinishAuthenticationResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          FinishAuthenticationResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          FinishAuthenticationResponse(response, serverIdentity, nonce),
     ) as FinishAuthenticationResponse;
   }
 }
