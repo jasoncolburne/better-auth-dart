@@ -32,17 +32,17 @@ class Secp256r1VerificationKey implements IVerificationKey {
 final authenticationPaths = IAuthenticationPaths(
   account: AccountPaths(
     create: '/account/create',
+    recover: '/account/recover',
   ),
-  authenticate: AuthenticatePaths(
-    start: '/authenticate/start',
-    finish: '/authenticate/finish',
+  session: SessionPaths(
+    request: '/session/request',
+    connect: '/session/connect',
+    refresh: '/session/refresh',
   ),
-  rotate: RotatePaths(
-    authentication: '/rotate/authentication',
-    access: '/rotate/access',
-    link: '/rotate/link',
-    unlink: '/rotate/unlink',
-    recover: '/rotate/recover',
+  device: DevicePaths(
+    rotate: '/device/rotate',
+    link: '/device/link',
+    unlink: '/device/unlink',
   ),
 );
 

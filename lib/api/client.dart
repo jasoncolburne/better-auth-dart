@@ -138,7 +138,7 @@ class BetterAuthClient {
 
     await request.sign(await _authenticationKeyStore.signer());
     final message = await request.serialize();
-    final reply = await _network.sendRequest(_paths.rotate.link, message);
+    final reply = await _network.sendRequest(_paths.device.link, message);
 
     final response = LinkDeviceResponse.parse(reply);
     await _verifyResponse(
@@ -174,7 +174,7 @@ class BetterAuthClient {
 
     await request.sign(await _authenticationKeyStore.signer());
     final message = await request.serialize();
-    final reply = await _network.sendRequest(_paths.rotate.unlink, message);
+    final reply = await _network.sendRequest(_paths.device.unlink, message);
 
     final response = UnlinkDeviceResponse.parse(reply);
     await _verifyResponse(
@@ -203,7 +203,7 @@ class BetterAuthClient {
     await request.sign(await _authenticationKeyStore.signer());
     final message = await request.serialize();
     final reply =
-        await _network.sendRequest(_paths.rotate.authentication, message);
+        await _network.sendRequest(_paths.device.rotate, message);
 
     final response = RotateAuthenticationKeyResponse.parse(reply);
     await _verifyResponse(
@@ -230,7 +230,7 @@ class BetterAuthClient {
 
     final startMessage = await startRequest.serialize();
     final startReply =
-        await _network.sendRequest(_paths.authenticate.start, startMessage);
+        await _network.sendRequest(_paths.session.request, startMessage);
 
     final startResponse = StartAuthenticationResponse.parse(startReply);
     await _verifyResponse(
@@ -259,7 +259,7 @@ class BetterAuthClient {
     await finishRequest.sign(await _authenticationKeyStore.signer());
     final finishMessage = await finishRequest.serialize();
     final finishReply =
-        await _network.sendRequest(_paths.authenticate.finish, finishMessage);
+        await _network.sendRequest(_paths.session.connect, finishMessage);
 
     final finishResponse = FinishAuthenticationResponse.parse(finishReply);
     await _verifyResponse(
@@ -289,7 +289,7 @@ class BetterAuthClient {
 
     await request.sign(await _accessKeyStore.signer());
     final message = await request.serialize();
-    final reply = await _network.sendRequest(_paths.rotate.access, message);
+    final reply = await _network.sendRequest(_paths.session.refresh, message);
 
     final response = RefreshAccessTokenResponse.parse(reply);
     await _verifyResponse(
@@ -324,7 +324,7 @@ class BetterAuthClient {
 
     await request.sign(recoveryKey);
     final message = await request.serialize();
-    final reply = await _network.sendRequest(_paths.rotate.recover, message);
+    final reply = await _network.sendRequest(_paths.account.recover, message);
 
     final response = RecoverAccountResponse.parse(reply);
     await _verifyResponse(
