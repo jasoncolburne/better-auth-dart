@@ -338,14 +338,12 @@ class BetterAuthClient {
   }
 
   Future<String> makeAccessRequest<T>(String path, T request) async {
-    final accessRequest = AccessRequest<T>({
-      'access': {
-        'nonce': await _noncer.generate128(),
-        'timestamp': _timestamper.format(_timestamper.now()),
-        'token': await _accessTokenStore.get(),
-      },
-      'request': request,
-    });
+    final accessRequest = AccessRequest<T>(
+      request, 
+      await _noncer.generate128(),
+      _timestamper.format(_timestamper.now()),
+      await _accessTokenStore.get(),
+    );
 
     await accessRequest.sign(await _accessKeyStore.signer());
     final message = await accessRequest.serialize();
