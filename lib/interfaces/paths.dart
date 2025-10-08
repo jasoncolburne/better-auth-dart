@@ -22,12 +22,12 @@ class AccountPaths {
 
 class SessionPaths {
   final String request;
-  final String connect;
+  final String create;
   final String refresh;
 
   SessionPaths({
     required this.request,
-    required this.connect,
+    required this.create,
     required this.refresh,
   });
 }

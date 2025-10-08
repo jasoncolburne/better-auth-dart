@@ -258,7 +258,7 @@ class BetterAuthClient {
     await finishRequest.sign(await _authenticationKeyStore.signer());
     final finishMessage = await finishRequest.serialize();
     final finishReply =
-        await _network.sendRequest(_paths.session.connect, finishMessage);
+        await _network.sendRequest(_paths.session.create, finishMessage);
 
     final finishResponse = FinishAuthenticationResponse.parse(finishReply);
     await _verifyResponse(
