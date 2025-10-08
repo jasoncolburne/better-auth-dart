@@ -202,8 +202,7 @@ class BetterAuthClient {
 
     await request.sign(await _authenticationKeyStore.signer());
     final message = await request.serialize();
-    final reply =
-        await _network.sendRequest(_paths.device.rotate, message);
+    final reply = await _network.sendRequest(_paths.device.rotate, message);
 
     final response = RotateAuthenticationKeyResponse.parse(reply);
     await _verifyResponse(
