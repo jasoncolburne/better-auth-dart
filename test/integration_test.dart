@@ -32,17 +32,17 @@ class Secp256r1VerificationKey implements IVerificationKey {
 final authenticationPaths = IAuthenticationPaths(
   account: AccountPaths(
     create: '/account/create',
+    recover: '/account/recover',
   ),
-  authenticate: AuthenticatePaths(
-    start: '/authenticate/start',
-    finish: '/authenticate/finish',
+  session: SessionPaths(
+    request: '/session/request',
+    create: '/session/create',
+    refresh: '/session/refresh',
   ),
-  rotate: RotatePaths(
-    authentication: '/rotate/authentication',
-    access: '/rotate/access',
-    link: '/rotate/link',
-    unlink: '/rotate/unlink',
-    recover: '/rotate/recover',
+  device: DevicePaths(
+    rotate: '/device/rotate',
+    link: '/device/link',
+    unlink: '/device/unlink',
   ),
 );
 
@@ -86,9 +86,9 @@ Future<void> executeFlow(
   IVerifier eccVerifier,
   IVerificationKey responseVerificationKey,
 ) async {
-  await betterAuthClient.rotateAuthenticationKey();
-  await betterAuthClient.authenticate();
-  await betterAuthClient.refreshAccessToken();
+  await betterAuthClient.rotateDevice();
+  await betterAuthClient.createSession();
+  await betterAuthClient.refreshSession();
 
   await testAccess(betterAuthClient, eccVerifier, responseVerificationKey);
 }
@@ -327,7 +327,7 @@ void main() {
       await betterAuthClient.createAccount(recoveryHash);
 
       try {
-        await betterAuthClient.authenticate();
+        await betterAuthClient.createSession();
         final message = {
           'foo': 'bar',
           'bar': 'foo',

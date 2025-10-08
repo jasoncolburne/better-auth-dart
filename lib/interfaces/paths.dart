@@ -1,45 +1,45 @@
 class IAuthenticationPaths {
   final AccountPaths account;
-  final AuthenticatePaths authenticate;
-  final RotatePaths rotate;
+  final SessionPaths session;
+  final DevicePaths device;
 
   IAuthenticationPaths({
     required this.account,
-    required this.authenticate,
-    required this.rotate,
+    required this.session,
+    required this.device,
   });
 }
 
 class AccountPaths {
   final String create;
+  final String recover;
 
   AccountPaths({
     required this.create,
+    required this.recover,
   });
 }
 
-class AuthenticatePaths {
-  final String start;
-  final String finish;
+class SessionPaths {
+  final String request;
+  final String create;
+  final String refresh;
 
-  AuthenticatePaths({
-    required this.start,
-    required this.finish,
+  SessionPaths({
+    required this.request,
+    required this.create,
+    required this.refresh,
   });
 }
 
-class RotatePaths {
-  final String authentication;
-  final String access;
+class DevicePaths {
+  final String rotate;
   final String link;
   final String unlink;
-  final String recover;
 
-  RotatePaths({
-    required this.authentication,
-    required this.access,
+  DevicePaths({
+    required this.rotate,
     required this.link,
     required this.unlink,
-    required this.recover,
   });
 }

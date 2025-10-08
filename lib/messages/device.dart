@@ -76,3 +76,27 @@ class UnlinkDeviceResponse extends ServerResponse<Map<String, dynamic>> {
     ) as UnlinkDeviceResponse;
   }
 }
+
+class RotateDeviceRequest extends ClientRequest<Map<String, dynamic>> {
+  RotateDeviceRequest(super.request, super.nonce);
+
+  static RotateDeviceRequest parse(String message) {
+    return ClientRequest.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> request, String nonce) =>
+          RotateDeviceRequest(request, nonce),
+    ) as RotateDeviceRequest;
+  }
+}
+
+class RotateDeviceResponse extends ServerResponse<Map<String, dynamic>> {
+  RotateDeviceResponse(super.response, super.serverIdentity, super.nonce);
+
+  static RotateDeviceResponse parse(String message) {
+    return ServerResponse.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          RotateDeviceResponse(response, serverIdentity, nonce),
+    ) as RotateDeviceResponse;
+  }
+}
