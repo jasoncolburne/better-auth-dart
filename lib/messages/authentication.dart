@@ -22,7 +22,8 @@ class StartAuthenticationRequest extends SerializableMessage {
 }
 
 class StartAuthenticationResponse extends ServerResponse<Map<String, dynamic>> {
-  StartAuthenticationResponse(super.response, super.serverIdentity, super.nonce);
+  StartAuthenticationResponse(
+      super.response, super.serverIdentity, super.nonce);
 
   static StartAuthenticationResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
