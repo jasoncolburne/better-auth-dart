@@ -5,11 +5,11 @@ class ServerResponse<T> extends SignableMessage {
   @override
   late final Map<String, dynamic> payload;
 
-  ServerResponse(T response, String responseKeyHash, String nonce) {
+  ServerResponse(T response, String serverIdentity, String nonce) {
     payload = {
       'access': {
         'nonce': nonce,
-        'responseKeyHash': responseKeyHash,
+        'serverIdentity': serverIdentity,
       },
       'response': response,
     };
@@ -17,7 +17,7 @@ class ServerResponse<T> extends SignableMessage {
 
   static ServerResponse<T> parse<T>(
     String message,
-    ServerResponse<T> Function(T response, String publicKeyHash, String nonce)
+    ServerResponse<T> Function(T response, String serverIdentity, String nonce)
         constructor,
   ) {
     final json = jsonDecode(message) as Map<String, dynamic>;
@@ -25,7 +25,7 @@ class ServerResponse<T> extends SignableMessage {
     final access = payload['access'] as Map<String, dynamic>;
     final result = constructor(
       payload['response'] as T,
-      access['responseKeyHash'] as String,
+      access['serverIdentity'] as String,
       access['nonce'] as String,
     );
     result.signature = json['signature'] as String?;
@@ -34,13 +34,13 @@ class ServerResponse<T> extends SignableMessage {
 }
 
 class ScannableResponse extends ServerResponse<Map<String, dynamic>> {
-  ScannableResponse(super.response, super.publicKeyHash, super.nonce);
+  ScannableResponse(super.response, super.serverIdentity, super.nonce);
 
   static ScannableResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          ScannableResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          ScannableResponse(response, serverIdentity, nonce),
     ) as ScannableResponse;
   }
 }

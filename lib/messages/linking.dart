@@ -42,13 +42,13 @@ class LinkDeviceRequest extends ClientRequest<Map<String, dynamic>> {
 }
 
 class LinkDeviceResponse extends ServerResponse<Map<String, dynamic>> {
-  LinkDeviceResponse(super.response, super.publicKeyHash, super.nonce);
+  LinkDeviceResponse(super.response, super.serverIdentity, super.nonce);
 
   static LinkDeviceResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          LinkDeviceResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          LinkDeviceResponse(response, serverIdentity, nonce),
     ) as LinkDeviceResponse;
   }
 }
@@ -66,13 +66,13 @@ class UnlinkDeviceRequest extends ClientRequest<Map<String, dynamic>> {
 }
 
 class UnlinkDeviceResponse extends ServerResponse<Map<String, dynamic>> {
-  UnlinkDeviceResponse(super.response, super.publicKeyHash, super.nonce);
+  UnlinkDeviceResponse(super.response, super.serverIdentity, super.nonce);
 
   static UnlinkDeviceResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          UnlinkDeviceResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          UnlinkDeviceResponse(response, serverIdentity, nonce),
     ) as UnlinkDeviceResponse;
   }
 }

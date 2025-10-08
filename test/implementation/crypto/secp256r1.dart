@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 import 'package:better_auth_dart/interfaces/crypto.dart';
 import '../encoding/base64.dart';
+import 'entropy.dart';
 
 class Secp256r1Verifier implements IVerifier {
   @override
@@ -58,10 +59,7 @@ class Secp256r1 implements ISigningKey {
     final keyGen = ECKeyGenerator();
     final secureRandom = FortunaRandom();
 
-    final seedSource = Uint8List(32);
-    for (int i = 0; i < 32; i++) {
-      seedSource[i] = DateTime.now().millisecondsSinceEpoch % 256;
-    }
+    final seedSource = await getEntropy(32);
     secureRandom.seed(KeyParameter(seedSource));
 
     final params = ECKeyGeneratorParameters(ECDomainParameters('prime256v1'));
@@ -84,10 +82,7 @@ class Secp256r1 implements ISigningKey {
     final messageBytes = utf8.encode(message);
 
     final secureRandom = FortunaRandom();
-    final seedSource = Uint8List(32);
-    for (int i = 0; i < 32; i++) {
-      seedSource[i] = DateTime.now().millisecondsSinceEpoch % 256;
-    }
+    final seedSource = await getEntropy(32);
     secureRandom.seed(KeyParameter(seedSource));
 
     final signer = ECDSASigner(SHA256Digest());

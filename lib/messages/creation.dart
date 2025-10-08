@@ -14,13 +14,13 @@ class CreationRequest extends ClientRequest<Map<String, dynamic>> {
 }
 
 class CreationResponse extends ServerResponse<Map<String, dynamic>> {
-  CreationResponse(super.response, super.publicKeyHash, super.nonce);
+  CreationResponse(super.response, super.serverIdentity, super.nonce);
 
   static CreationResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          CreationResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          CreationResponse(response, serverIdentity, nonce),
     ) as CreationResponse;
   }
 }

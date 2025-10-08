@@ -4,7 +4,7 @@ import '../messages/messages.dart';
 class BetterAuthClient {
   final IHasher _hasher;
   final INoncer _noncer;
-  final IVerificationKey _responsePublicKey;
+  final IVerificationKeyStore _verificationKeyStore;
   final ITimestamper _timestamper;
   final INetwork _network;
   final IAuthenticationPaths _paths;
@@ -17,7 +17,7 @@ class BetterAuthClient {
   BetterAuthClient({
     required IHasher hasher,
     required INoncer noncer,
-    required IVerificationKey responsePublicKey,
+    required IVerificationKeyStore verificationKeyStore,
     required ITimestamper timestamper,
     required INetwork network,
     required IAuthenticationPaths paths,
@@ -28,7 +28,7 @@ class BetterAuthClient {
     required IClientValueStore accessTokenStore,
   })  : _hasher = hasher,
         _noncer = noncer,
-        _responsePublicKey = responsePublicKey,
+        _verificationKeyStore = verificationKeyStore,
         _timestamper = timestamper,
         _network = network,
         _paths = paths,
@@ -47,15 +47,10 @@ class BetterAuthClient {
   }
 
   Future<void> _verifyResponse(
-      SignableMessage response, String publicKeyHash) async {
-    final publicKey = await _responsePublicKey.public();
-    final hash = await _hasher.sum(publicKey);
-
-    if (hash != publicKeyHash) {
-      throw Exception('hash mismatch');
-    }
-
-    final verifier = _responsePublicKey.verifier();
+      SignableMessage response, String serverIdentity) async {
+    final verificationKey = await _verificationKeyStore.get(serverIdentity);
+    final publicKey = await verificationKey.public();
+    final verifier = verificationKey.verifier();
     await response.verify(verifier, publicKey);
   }
 
@@ -84,7 +79,7 @@ class BetterAuthClient {
 
     final response = CreationResponse.parse(reply);
     await _verifyResponse(
-        response, response.payload['access']['responseKeyHash']);
+        response, response.payload['access']['serverIdentity']);
 
     if (response.payload['access']['nonce'] != nonce) {
       throw Exception('incorrect nonce');
@@ -147,7 +142,7 @@ class BetterAuthClient {
 
     final response = LinkDeviceResponse.parse(reply);
     await _verifyResponse(
-        response, response.payload['access']['responseKeyHash']);
+        response, response.payload['access']['serverIdentity']);
 
     if (response.payload['access']['nonce'] != nonce) {
       throw Exception('incorrect nonce');
@@ -183,7 +178,7 @@ class BetterAuthClient {
 
     final response = UnlinkDeviceResponse.parse(reply);
     await _verifyResponse(
-        response, response.payload['access']['responseKeyHash']);
+        response, response.payload['access']['serverIdentity']);
 
     if (response.payload['access']['nonce'] != nonce) {
       throw Exception('incorrect nonce');
@@ -212,7 +207,7 @@ class BetterAuthClient {
 
     final response = RotateAuthenticationKeyResponse.parse(reply);
     await _verifyResponse(
-        response, response.payload['access']['responseKeyHash']);
+        response, response.payload['access']['serverIdentity']);
 
     if (response.payload['access']['nonce'] != nonce) {
       throw Exception('incorrect nonce');
@@ -239,7 +234,7 @@ class BetterAuthClient {
 
     final startResponse = StartAuthenticationResponse.parse(startReply);
     await _verifyResponse(
-        startResponse, startResponse.payload['access']['responseKeyHash']);
+        startResponse, startResponse.payload['access']['serverIdentity']);
 
     if (startResponse.payload['access']['nonce'] != startNonce) {
       throw Exception('incorrect nonce');
@@ -268,7 +263,7 @@ class BetterAuthClient {
 
     final finishResponse = FinishAuthenticationResponse.parse(finishReply);
     await _verifyResponse(
-        finishResponse, finishResponse.payload['access']['responseKeyHash']);
+        finishResponse, finishResponse.payload['access']['serverIdentity']);
 
     if (finishResponse.payload['access']['nonce'] != finishNonce) {
       throw Exception('incorrect nonce');
@@ -298,7 +293,7 @@ class BetterAuthClient {
 
     final response = RefreshAccessTokenResponse.parse(reply);
     await _verifyResponse(
-        response, response.payload['access']['responseKeyHash']);
+        response, response.payload['access']['serverIdentity']);
 
     if (response.payload['access']['nonce'] != nonce) {
       throw Exception('incorrect nonce');
@@ -333,7 +328,7 @@ class BetterAuthClient {
 
     final response = RecoverAccountResponse.parse(reply);
     await _verifyResponse(
-        response, response.payload['access']['responseKeyHash']);
+        response, response.payload['access']['serverIdentity']);
 
     if (response.payload['access']['nonce'] != nonce) {
       throw Exception('incorrect nonce');

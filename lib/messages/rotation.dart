@@ -17,13 +17,13 @@ class RotateAuthenticationKeyRequest
 class RotateAuthenticationKeyResponse
     extends ServerResponse<Map<String, dynamic>> {
   RotateAuthenticationKeyResponse(
-      super.response, super.publicKeyHash, super.nonce);
+      super.response, super.serverIdentity, super.nonce);
 
   static RotateAuthenticationKeyResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          RotateAuthenticationKeyResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          RotateAuthenticationKeyResponse(response, serverIdentity, nonce),
     ) as RotateAuthenticationKeyResponse;
   }
 }

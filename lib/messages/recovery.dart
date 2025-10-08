@@ -14,13 +14,13 @@ class RecoverAccountRequest extends ClientRequest<Map<String, dynamic>> {
 }
 
 class RecoverAccountResponse extends ServerResponse<Map<String, dynamic>> {
-  RecoverAccountResponse(super.response, super.publicKeyHash, super.nonce);
+  RecoverAccountResponse(super.response, super.serverIdentity, super.nonce);
 
   static RecoverAccountResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          RecoverAccountResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          RecoverAccountResponse(response, serverIdentity, nonce),
     ) as RecoverAccountResponse;
   }
 }

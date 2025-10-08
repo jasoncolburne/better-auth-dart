@@ -70,13 +70,13 @@ class Network implements INetwork {
 }
 
 class FakeResponse extends ServerResponse<Map<String, dynamic>> {
-  FakeResponse(super.response, super.publicKeyHash, super.nonce);
+  FakeResponse(super.response, super.serverIdentity, super.nonce);
 
   static FakeResponse parse(String message) {
     return ServerResponse.parse<Map<String, dynamic>>(
       message,
-      (Map<String, dynamic> response, String publicKeyHash, String nonce) =>
-          FakeResponse(response, publicKeyHash, nonce),
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          FakeResponse(response, serverIdentity, nonce),
     ) as FakeResponse;
   }
 }
@@ -129,10 +129,15 @@ void main() {
       final responseVerificationKey =
           Secp256r1VerificationKey(responsePublicKey);
 
+      // Server identity is the public key itself (not hashed)
+      final serverIdentity = responsePublicKey;
+      final verificationKeyStore = VerificationKeyStore();
+      verificationKeyStore.add(serverIdentity, responseVerificationKey);
+
       final betterAuthClient = BetterAuthClient(
         hasher: hasher,
         noncer: noncer,
-        responsePublicKey: responseVerificationKey,
+        verificationKeyStore: verificationKeyStore,
         timestamper: Rfc3339Nano(),
         network: network,
         paths: authenticationPaths,
@@ -162,10 +167,15 @@ void main() {
       final responseVerificationKey =
           Secp256r1VerificationKey(responsePublicKey);
 
+      // Server identity is the public key itself (not hashed)
+      final serverIdentity = responsePublicKey;
+      final verificationKeyStore = VerificationKeyStore();
+      verificationKeyStore.add(serverIdentity, responseVerificationKey);
+
       final betterAuthClient = BetterAuthClient(
         hasher: hasher,
         noncer: noncer,
-        responsePublicKey: responseVerificationKey,
+        verificationKeyStore: verificationKeyStore,
         timestamper: Rfc3339Nano(),
         network: network,
         paths: authenticationPaths,
@@ -176,10 +186,14 @@ void main() {
         accessTokenStore: ClientValueStore(),
       );
 
+      final recoveredVerificationKeyStore = VerificationKeyStore();
+      recoveredVerificationKeyStore.add(
+          serverIdentity, responseVerificationKey);
+
       final recoveredBetterAuthClient = BetterAuthClient(
         hasher: Hasher(),
         noncer: Noncer(),
-        responsePublicKey: responseVerificationKey,
+        verificationKeyStore: recoveredVerificationKeyStore,
         timestamper: Rfc3339Nano(),
         network: network,
         paths: authenticationPaths,
@@ -218,10 +232,15 @@ void main() {
       final responseVerificationKey =
           Secp256r1VerificationKey(responsePublicKey);
 
+      // Server identity is the public key itself (not hashed)
+      final serverIdentity = responsePublicKey;
+      final verificationKeyStore = VerificationKeyStore();
+      verificationKeyStore.add(serverIdentity, responseVerificationKey);
+
       final betterAuthClient = BetterAuthClient(
         hasher: hasher,
         noncer: noncer,
-        responsePublicKey: responseVerificationKey,
+        verificationKeyStore: verificationKeyStore,
         timestamper: Rfc3339Nano(),
         network: network,
         paths: authenticationPaths,
@@ -232,10 +251,13 @@ void main() {
         accessTokenStore: ClientValueStore(),
       );
 
+      final linkedVerificationKeyStore = VerificationKeyStore();
+      linkedVerificationKeyStore.add(serverIdentity, responseVerificationKey);
+
       final linkedBetterAuthClient = BetterAuthClient(
         hasher: Hasher(),
         noncer: Noncer(),
-        responsePublicKey: responseVerificationKey,
+        verificationKeyStore: linkedVerificationKeyStore,
         timestamper: Rfc3339Nano(),
         network: network,
         paths: authenticationPaths,
@@ -281,11 +303,16 @@ void main() {
       final responseVerificationKey =
           Secp256r1VerificationKey(responsePublicKey);
 
+      // Server identity is the public key itself (not hashed)
+      final serverIdentity = responsePublicKey;
+      final verificationKeyStore = VerificationKeyStore();
+      verificationKeyStore.add(serverIdentity, responseVerificationKey);
+
       final accessTokenStore = ClientValueStore();
       final betterAuthClient = BetterAuthClient(
         hasher: hasher,
         noncer: noncer,
-        responsePublicKey: responseVerificationKey,
+        verificationKeyStore: verificationKeyStore,
         timestamper: Rfc3339Nano(),
         network: network,
         paths: authenticationPaths,
