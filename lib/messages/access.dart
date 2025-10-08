@@ -6,7 +6,7 @@ class AccessRequest<T> extends SignableMessage {
       'access': {
         'nonce': nonce,
         'timestamp': timestamp,
-        'token':  token,
+        'token': token,
       },
       "request": request,
     };

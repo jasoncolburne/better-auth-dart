@@ -339,7 +339,7 @@ class BetterAuthClient {
 
   Future<String> makeAccessRequest<T>(String path, T request) async {
     final accessRequest = AccessRequest<T>(
-      request, 
+      request,
       await _noncer.generate128(),
       _timestamper.format(_timestamper.now()),
       await _accessTokenStore.get(),
