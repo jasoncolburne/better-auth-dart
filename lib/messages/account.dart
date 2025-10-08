@@ -1,6 +1,30 @@
 import 'request.dart';
 import 'response.dart';
 
+class CreateAccountRequest extends ClientRequest<Map<String, dynamic>> {
+  CreateAccountRequest(super.request, super.nonce);
+
+  static CreateAccountRequest parse(String message) {
+    return ClientRequest.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> request, String nonce) =>
+          CreateAccountRequest(request, nonce),
+    ) as CreateAccountRequest;
+  }
+}
+
+class CreateAccountResponse extends ServerResponse<Map<String, dynamic>> {
+  CreateAccountResponse(super.response, super.serverIdentity, super.nonce);
+
+  static CreateAccountResponse parse(String message) {
+    return ServerResponse.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          CreateAccountResponse(response, serverIdentity, nonce),
+    ) as CreateAccountResponse;
+  }
+}
+
 class RecoverAccountRequest extends ClientRequest<Map<String, dynamic>> {
   RecoverAccountRequest(super.request, super.nonce);
 

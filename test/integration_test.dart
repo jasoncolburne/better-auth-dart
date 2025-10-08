@@ -86,9 +86,9 @@ Future<void> executeFlow(
   IVerifier eccVerifier,
   IVerificationKey responseVerificationKey,
 ) async {
-  await betterAuthClient.rotateAuthenticationKey();
-  await betterAuthClient.authenticate();
-  await betterAuthClient.refreshAccessToken();
+  await betterAuthClient.rotateDevice();
+  await betterAuthClient.createSession();
+  await betterAuthClient.refreshSession();
 
   await testAccess(betterAuthClient, eccVerifier, responseVerificationKey);
 }
@@ -327,7 +327,7 @@ void main() {
       await betterAuthClient.createAccount(recoveryHash);
 
       try {
-        await betterAuthClient.authenticate();
+        await betterAuthClient.createSession();
         final message = {
           'foo': 'bar',
           'bar': 'foo',
