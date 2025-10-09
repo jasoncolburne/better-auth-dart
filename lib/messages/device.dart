@@ -4,10 +4,9 @@ import 'request.dart';
 import 'response.dart';
 
 class LinkContainer extends SignableMessage {
-  @override
-  final Map<String, dynamic> payload;
-
-  LinkContainer(this.payload);
+  LinkContainer(Map<String, dynamic> payload) {
+    this.payload = payload;
+  }
 
   @override
   String composePayload() {
