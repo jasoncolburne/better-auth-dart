@@ -2,9 +2,6 @@ import 'dart:convert';
 import 'message.dart';
 
 class ClientRequest<T> extends SignableMessage {
-  @override
-  late final Map<String, dynamic> payload;
-
   ClientRequest(T request, String nonce) {
     payload = {
       'access': {
