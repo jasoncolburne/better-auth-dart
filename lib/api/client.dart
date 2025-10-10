@@ -57,7 +57,7 @@ class BetterAuthClient {
   Future<void> createAccount(String recoveryHash) async {
     final (String identity, String publicKey, String rotationHash) =
         await _authenticationKeyStore.initialize(recoveryHash);
-    final device = await _hasher.sum(publicKey);
+    final device = await _hasher.sum(publicKey + rotationHash);
 
     final nonce = await _noncer.generate128();
 
@@ -91,7 +91,7 @@ class BetterAuthClient {
       String identity, ISigningKey recoveryKey, String recoveryHash) async {
     final (_, String publicKey, String rotationHash) =
         await _authenticationKeyStore.initialize();
-    final device = await _hasher.sum(publicKey);
+    final device = await _hasher.sum(publicKey + rotationHash);
     final nonce = await _noncer.generate128();
 
     final request = RecoverAccountRequest({
@@ -126,7 +126,7 @@ class BetterAuthClient {
   Future<String> generateLinkContainer(String identity) async {
     final (_, String publicKey, String rotationHash) =
         await _authenticationKeyStore.initialize();
-    final device = await _hasher.sum(publicKey);
+    final device = await _hasher.sum(publicKey + rotationHash);
 
     await _identityIdentifierStore.store(identity);
     await _deviceIdentifierStore.store(device);
