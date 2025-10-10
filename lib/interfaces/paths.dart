@@ -13,10 +13,12 @@ class IAuthenticationPaths {
 class AccountPaths {
   final String create;
   final String recover;
+  final String delete;
 
   AccountPaths({
     required this.create,
     required this.recover,
+    required this.delete,
   });
 }
 

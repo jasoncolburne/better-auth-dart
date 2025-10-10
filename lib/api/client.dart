@@ -217,6 +217,35 @@ class BetterAuthClient {
     await _authenticationKeyStore.rotate();
   }
 
+  Future<void> deleteAccount() async {
+    final nonce = await _noncer.generate128();
+    final (ISigningKey signingKey, String rotationHash) =
+        await _authenticationKeyStore.next();
+
+    final request = DeleteAccountRequest({
+      'authentication': {
+        'device': await _deviceIdentifierStore.get(),
+        'identity': await _identityIdentifierStore.get(),
+        'publicKey': await signingKey.public(),
+        'rotationHash': rotationHash,
+      },
+    }, nonce);
+
+    await request.sign(signingKey);
+    final message = await request.serialize();
+    final reply = await _network.sendRequest(_paths.account.delete, message);
+
+    final response = DeleteAccountResponse.parse(reply);
+    await _verifyResponse(
+        response, response.payload['access']['serverIdentity']);
+
+    if (response.payload['access']['nonce'] != nonce) {
+      throw Exception('incorrect nonce');
+    }
+
+    await _authenticationKeyStore.rotate();
+  }
+
   Future<void> rotateDevice() async {
     final (ISigningKey signingKey, String rotationHash) =
         await _authenticationKeyStore.next();

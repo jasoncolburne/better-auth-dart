@@ -48,3 +48,27 @@ class RecoverAccountResponse extends ServerResponse<Map<String, dynamic>> {
     ) as RecoverAccountResponse;
   }
 }
+
+class DeleteAccountRequest extends ClientRequest<Map<String, dynamic>> {
+  DeleteAccountRequest(super.request, super.nonce);
+
+  static DeleteAccountRequest parse(String message) {
+    return ClientRequest.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> request, String nonce) =>
+          DeleteAccountRequest(request, nonce),
+    ) as DeleteAccountRequest;
+  }
+}
+
+class DeleteAccountResponse extends ServerResponse<Map<String, dynamic>> {
+  DeleteAccountResponse(super.response, super.serverIdentity, super.nonce);
+
+  static DeleteAccountResponse parse(String message) {
+    return ServerResponse.parse<Map<String, dynamic>>(
+      message,
+      (Map<String, dynamic> response, String serverIdentity, String nonce) =>
+          DeleteAccountResponse(response, serverIdentity, nonce),
+    ) as DeleteAccountResponse;
+  }
+}
