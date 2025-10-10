@@ -152,6 +152,7 @@ void main() {
       final recoveryHash = await hasher.sum(await recoverySigner.public());
       await betterAuthClient.createAccount(recoveryHash);
       await executeFlow(betterAuthClient, eccVerifier, responseVerificationKey);
+      await betterAuthClient.deleteAccount();
     });
 
     test('recovers from loss', () async {
