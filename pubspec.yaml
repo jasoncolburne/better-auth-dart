@@ -1,6 +1,6 @@
 name: better_auth_dart
 description: A Dart port of better-auth authentication system
-version: 1.0.0
+version: 0.1.0
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
