@@ -9,7 +9,7 @@ class ClientRotatingKeyStore implements IClientRotatingKeyStore {
   final IHasher _hasher = Hasher();
 
   @override
-  Future<List<String>> initialize([String? extraData]) async {
+  Future<(String, String, String)> initialize([String? extraData]) async {
     final current = Secp256r1();
     final next = Secp256r1();
 
@@ -28,11 +28,11 @@ class ClientRotatingKeyStore implements IClientRotatingKeyStore {
     final rotationHash = await _hasher.sum(await next.public());
     final identity = await _hasher.sum(publicKey + rotationHash + suffix);
 
-    return [identity, publicKey, rotationHash];
+    return (identity, publicKey, rotationHash);
   }
 
   @override
-  Future<List<dynamic>> next() async {
+  Future<(ISigningKey, String)> next() async {
     if (_nextKey == null) {
       throw Exception('call initialize() first');
     }
@@ -45,7 +45,7 @@ class ClientRotatingKeyStore implements IClientRotatingKeyStore {
 
     final rotationHash = await _hasher.sum(await _futureKey!.public());
 
-    return [_nextKey!, rotationHash];
+    return (_nextKey!, rotationHash);
   }
 
   @override

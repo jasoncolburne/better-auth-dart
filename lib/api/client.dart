@@ -55,7 +55,7 @@ class BetterAuthClient {
   }
 
   Future<void> createAccount(String recoveryHash) async {
-    final [String identity, String publicKey, String rotationHash] =
+    final (String identity, String publicKey, String rotationHash) =
         await _authenticationKeyStore.initialize(recoveryHash);
     final device = await _hasher.sum(publicKey);
 
@@ -89,7 +89,7 @@ class BetterAuthClient {
 
   Future<void> recoverAccount(
       String identity, ISigningKey recoveryKey, String recoveryHash) async {
-    final [String publicKey, String rotationHash] =
+    final (_, String publicKey, String rotationHash) =
         await _authenticationKeyStore.initialize();
     final device = await _hasher.sum(publicKey);
     final nonce = await _noncer.generate128();
@@ -124,7 +124,7 @@ class BetterAuthClient {
   // happens on the new device
   // send identity by qr code or network from the existing device
   Future<String> generateLinkContainer(String identity) async {
-    final [String publicKey, String rotationHash] =
+    final (_, String publicKey, String rotationHash) =
         await _authenticationKeyStore.initialize();
     final device = await _hasher.sum(publicKey);
 
@@ -151,7 +151,7 @@ class BetterAuthClient {
   Future<void> linkDevice(String linkContainer) async {
     final container = LinkContainer.parse(linkContainer);
     final nonce = await _noncer.generate128();
-    final [ISigningKey signingKey, String rotationHash] =
+    final (ISigningKey signingKey, String rotationHash) =
         await _authenticationKeyStore.next();
 
     final request = LinkDeviceRequest({
@@ -181,7 +181,7 @@ class BetterAuthClient {
 
   Future<void> unlinkDevice(String device) async {
     final nonce = await _noncer.generate128();
-    final [ISigningKey signingKey, String rotationHash] =
+    final (ISigningKey signingKey, String rotationHash) =
         await _authenticationKeyStore.next();
 
     var hash = rotationHash;
@@ -218,7 +218,7 @@ class BetterAuthClient {
   }
 
   Future<void> rotateDevice() async {
-    final [ISigningKey signingKey, String rotationHash] =
+    final (ISigningKey signingKey, String rotationHash) =
         await _authenticationKeyStore.next();
     final nonce = await _noncer.generate128();
 
@@ -272,7 +272,7 @@ class BetterAuthClient {
       throw Exception('incorrect nonce');
     }
 
-    final [String publicKey, String rotationHash] =
+    final (_, String publicKey, String rotationHash) =
         await _accessKeyStore.initialize();
     final finishNonce = await _noncer.generate128();
 
@@ -305,7 +305,7 @@ class BetterAuthClient {
   }
 
   Future<void> refreshSession() async {
-    final [ISigningKey signingKey, String rotationHash] =
+    final (ISigningKey signingKey, String rotationHash) =
         await _accessKeyStore.next();
     final nonce = await _noncer.generate128();
 
