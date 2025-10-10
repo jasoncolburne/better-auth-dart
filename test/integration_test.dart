@@ -33,6 +33,7 @@ final authenticationPaths = IAuthenticationPaths(
   account: AccountPaths(
     create: '/account/create',
     recover: '/account/recover',
+    delete: '/account/delete',
   ),
   session: SessionPaths(
     request: '/session/request',
@@ -151,6 +152,7 @@ void main() {
       final recoveryHash = await hasher.sum(await recoverySigner.public());
       await betterAuthClient.createAccount(recoveryHash);
       await executeFlow(betterAuthClient, eccVerifier, responseVerificationKey);
+      await betterAuthClient.deleteAccount();
     });
 
     test('recovers from loss', () async {
