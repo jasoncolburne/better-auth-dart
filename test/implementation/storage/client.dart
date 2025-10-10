@@ -3,20 +3,21 @@ import '../crypto/hash.dart';
 import '../crypto/secp256r1.dart';
 
 class ClientRotatingKeyStore implements IClientRotatingKeyStore {
-  ISigningKey? _current;
-  ISigningKey? _next;
+  ISigningKey? _currentKey;
+  ISigningKey? _nextKey;
+  ISigningKey? _futureKey;
   final IHasher _hasher = Hasher();
 
   @override
-  Future<List<String>> initialize([String? extraData]) async {
+  Future<(String, String, String)> initialize([String? extraData]) async {
     final current = Secp256r1();
     final next = Secp256r1();
 
     await current.generate();
     await next.generate();
 
-    _current = current;
-    _next = next;
+    _currentKey = current;
+    _nextKey = next;
 
     String suffix = '';
     if (extraData != null) {
@@ -27,33 +28,48 @@ class ClientRotatingKeyStore implements IClientRotatingKeyStore {
     final rotationHash = await _hasher.sum(await next.public());
     final identity = await _hasher.sum(publicKey + rotationHash + suffix);
 
-    return [identity, publicKey, rotationHash];
+    return (identity, publicKey, rotationHash);
   }
 
   @override
-  Future<List<String>> rotate() async {
-    if (_next == null) {
+  Future<(ISigningKey, String)> next() async {
+    if (_nextKey == null) {
       throw Exception('call initialize() first');
     }
 
-    final next = Secp256r1();
-    await next.generate();
+    if (_futureKey == null) {
+      final key = Secp256r1();
+      await key.generate();
+      _futureKey = key;
+    }
 
-    _current = _next;
-    _next = next;
+    final rotationHash = await _hasher.sum(await _futureKey!.public());
 
-    final rotationHash = await _hasher.sum(await next.public());
+    return (_nextKey!, rotationHash);
+  }
 
-    return [await _current!.public(), rotationHash];
+  @override
+  Future<void> rotate() async {
+    if (_nextKey == null) {
+      throw Exception('call initialize() first');
+    }
+
+    if (_futureKey == null) {
+      throw Exception('call next() first');
+    }
+
+    _currentKey = _nextKey;
+    _nextKey = _futureKey;
+    _futureKey = null;
   }
 
   @override
   Future<ISigningKey> signer() async {
-    if (_current == null) {
+    if (_currentKey == null) {
       throw Exception('call initialize() first');
     }
 
-    return _current!;
+    return _currentKey!;
   }
 }
 

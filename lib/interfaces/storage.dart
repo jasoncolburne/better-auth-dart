@@ -12,13 +12,21 @@ abstract class IClientValueStore {
 
 abstract class IClientRotatingKeyStore {
   // returns: [identity, publicKey, rotationHash]
-  Future<List<String>> initialize([String? extraData]);
+  Future<(String, String, String)> initialize([String? extraData]);
+
+  // returns: [key, rotationHash]
+  //
+  // this should return the _next_ signing key and a hash of the subsequent key
+  // if no subsequent key exists yet, it should first be generated
+  //
+  // this facilitates a failed network request during a rotation operation
+  Future<(ISigningKey, String)> next();
 
   // throw an exception if:
-  // - no keys exist
+  // - next() has not been called since the last call to initialize() or rotate()
   //
-  // returns: [publicKey, rotationHash]
-  Future<List<String>> rotate();
+  // this is the commit operation of next()
+  Future<void> rotate();
 
   // returns: effectively, a handle to a signing key
   Future<ISigningKey> signer();
