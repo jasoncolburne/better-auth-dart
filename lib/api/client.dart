@@ -275,6 +275,36 @@ class BetterAuthClient {
     await _authenticationKeyStore.rotate();
   }
 
+  Future<void> changeRecoveryKey(String recoveryHash) async {
+    final (ISigningKey signingKey, String rotationHash) =
+        await _authenticationKeyStore.next();
+    final nonce = await _noncer.generate128();
+
+    final request = ChangeRecoveryKeyRequest({
+      'authentication': {
+        'device': await _deviceIdentifierStore.get(),
+        'identity': await _identityIdentifierStore.get(),
+        'publicKey': await signingKey.public(),
+        'recoveryHash': recoveryHash,
+        'rotationHash': rotationHash,
+      },
+    }, nonce);
+
+    await request.sign(signingKey);
+    final message = await request.serialize();
+    final reply = await _network.sendRequest(_paths.recovery.change, message);
+
+    final response = ChangeRecoveryKeyResponse.parse(reply);
+    await _verifyResponse(
+        response, response.payload['access']['serverIdentity']);
+
+    if (response.payload['access']['nonce'] != nonce) {
+      throw Exception('incorrect nonce');
+    }
+
+    await _authenticationKeyStore.rotate();
+  }
+
   Future<void> createSession() async {
     final startNonce = await _noncer.generate128();
 
