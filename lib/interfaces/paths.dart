@@ -2,11 +2,13 @@ class IAuthenticationPaths {
   final AccountPaths account;
   final SessionPaths session;
   final DevicePaths device;
+  final RecoveryPaths recovery;
 
   IAuthenticationPaths({
     required this.account,
     required this.session,
     required this.device,
+    required this.recovery,
   });
 }
 
@@ -43,5 +45,13 @@ class DevicePaths {
     required this.rotate,
     required this.link,
     required this.unlink,
+  });
+}
+
+class RecoveryPaths {
+  final String change;
+
+  RecoveryPaths({
+    required this.change,
   });
 }

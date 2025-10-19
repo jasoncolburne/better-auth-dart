@@ -45,6 +45,9 @@ final authenticationPaths = IAuthenticationPaths(
     link: '/device/link',
     unlink: '/device/unlink',
   ),
+  recovery: RecoveryPaths(
+    change: '/recovery/change',
+  ),
 );
 
 class Network implements INetwork {
@@ -209,13 +212,19 @@ void main() {
       final recoveryHash = await hasher.sum(await recoverySigner.public());
       await betterAuthClient.createAccount(recoveryHash);
 
+      final identity = await betterAuthClient.identity();
+      final newRecoverySigner = Secp256r1();
       final nextRecoverySigner = Secp256r1();
+      await newRecoverySigner.generate();
       await nextRecoverySigner.generate();
+      final newRecoveryHash =
+          await hasher.sum(await newRecoverySigner.public());
       final nextRecoveryHash =
           await hasher.sum(await nextRecoverySigner.public());
-      final identity = await betterAuthClient.identity();
+
+      await betterAuthClient.changeRecoveryKey(newRecoveryHash);
       await recoveredBetterAuthClient.recoverAccount(
-          identity, recoverySigner, nextRecoveryHash);
+          identity, newRecoverySigner, nextRecoveryHash);
       await executeFlow(
           recoveredBetterAuthClient, eccVerifier, responseVerificationKey);
     });

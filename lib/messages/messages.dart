@@ -3,5 +3,6 @@ export 'request.dart';
 export 'response.dart';
 export 'account.dart';
 export 'device.dart';
+export 'recovery.dart';
 export 'session.dart';
 export 'access.dart';
