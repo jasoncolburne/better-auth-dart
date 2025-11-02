@@ -1,3 +1,4 @@
+import '../error.dart';
 import '../interfaces/interfaces.dart';
 import '../messages/messages.dart';
 
@@ -79,8 +80,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _identityIdentifierStore.store(identity);
@@ -113,8 +115,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _identityIdentifierStore.store(identity);
@@ -172,8 +175,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _authenticationKeyStore.rotate();
@@ -210,8 +214,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _authenticationKeyStore.rotate();
@@ -239,8 +244,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _authenticationKeyStore.rotate();
@@ -268,8 +274,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _authenticationKeyStore.rotate();
@@ -298,8 +305,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _authenticationKeyStore.rotate();
@@ -327,8 +335,11 @@ class BetterAuthClient {
     await _verifyResponse(
         startResponse, startResponse.payload['access']['serverIdentity']);
 
-    if (startResponse.payload['access']['nonce'] != startNonce) {
-      throw Exception('incorrect nonce');
+    final startResponseNonce =
+        startResponse.payload['access']['nonce'] as String;
+    if (startResponseNonce != startNonce) {
+      throw IncorrectNonceError(
+          expected: startNonce, actual: startResponseNonce);
     }
 
     final (_, String publicKey, String rotationHash) =
@@ -355,8 +366,11 @@ class BetterAuthClient {
     await _verifyResponse(
         finishResponse, finishResponse.payload['access']['serverIdentity']);
 
-    if (finishResponse.payload['access']['nonce'] != finishNonce) {
-      throw Exception('incorrect nonce');
+    final finishResponseNonce =
+        finishResponse.payload['access']['nonce'] as String;
+    if (finishResponseNonce != finishNonce) {
+      throw IncorrectNonceError(
+          expected: finishNonce, actual: finishResponseNonce);
     }
 
     await _accessTokenStore
@@ -384,8 +398,9 @@ class BetterAuthClient {
     await _verifyResponse(
         response, response.payload['access']['serverIdentity']);
 
-    if (response.payload['access']['nonce'] != nonce) {
-      throw Exception('incorrect nonce');
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != nonce) {
+      throw IncorrectNonceError(expected: nonce, actual: responseNonce);
     }
 
     await _accessTokenStore
@@ -406,9 +421,10 @@ class BetterAuthClient {
     final reply = await _network.sendRequest(path, message);
     final response = ScannableResponse.parse(reply);
 
-    if (response.payload['access']['nonce'] !=
-        accessRequest.payload['access']['nonce']) {
-      throw Exception('incorrect nonce');
+    final requestNonce = accessRequest.payload['access']['nonce'] as String;
+    final responseNonce = response.payload['access']['nonce'] as String;
+    if (responseNonce != requestNonce) {
+      throw IncorrectNonceError(expected: requestNonce, actual: responseNonce);
     }
 
     return reply;

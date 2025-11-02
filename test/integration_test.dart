@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:better_auth_dart/api/api.dart';
 import 'package:better_auth_dart/interfaces/interfaces.dart';
 import 'package:better_auth_dart/messages/messages.dart';
+import 'package:better_auth_dart/error.dart';
 import 'implementation/implementation.dart';
 
 const debugLogging = false;
@@ -346,8 +347,8 @@ void main() {
         await betterAuthClient.makeAccessRequest('/bad/nonce', message);
 
         throw Exception('expected a failure');
-      } catch (e) {
-        expect(e.toString(), contains('incorrect nonce'));
+      } on IncorrectNonceError {
+        // Expected - nonce mismatch detected
       }
     });
   });
