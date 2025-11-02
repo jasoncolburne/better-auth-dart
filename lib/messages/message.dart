@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import '../error.dart';
 import '../interfaces/crypto.dart';
 
 abstract class SerializableMessage {
@@ -11,7 +13,8 @@ abstract class SignableMessage extends SerializableMessage {
 
   String composePayload() {
     if (payload == null) {
-      throw Exception('payload not defined');
+      throw InvalidMessageError(
+          field: 'payload', details: 'payload not defined');
     }
     return jsonEncode(payload);
   }
@@ -19,7 +22,8 @@ abstract class SignableMessage extends SerializableMessage {
   @override
   Future<String> serialize() async {
     if (signature == null) {
-      throw Exception('null signature');
+      throw InvalidMessageError(
+          field: 'signature', details: 'signature is null');
     }
     return '{"payload":${composePayload()},"signature":"$signature"}';
   }
@@ -30,7 +34,8 @@ abstract class SignableMessage extends SerializableMessage {
 
   Future<void> verify(IVerifier verifier, String publicKey) async {
     if (signature == null) {
-      throw Exception('null signature');
+      throw InvalidMessageError(
+          field: 'signature', details: 'signature is null');
     }
     await verifier.verify(composePayload(), signature!, publicKey);
   }
