@@ -1,0 +1,10 @@
+# Dart build artifacts
+.dart_tool
+build
+.packages
+
+# Logs
+*.log
+
+# OS
+.DS_Store
